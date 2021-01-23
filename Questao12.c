@@ -16,6 +16,8 @@ int main(int argc,char const*argv[])
     Auxiliar auxiliares[TAMAUXILIARES];
     Cliente clientes[TAMCLIENTES];
 
+    //Ver se tenho permissao
+
     int nClinicas=0,nMedicos=0,nEnfermeiros=0,resultadoClin,resultadoMed,resultadoEnf;
 
     criarClinica(&clinica,nClinicas);
