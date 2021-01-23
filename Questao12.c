@@ -18,6 +18,7 @@ int main(int argc,char const*argv[])
 
     //Ver se tenho permissao
     //Teste 2
+    //Teste3
 
     int nClinicas=0,nMedicos=0,nEnfermeiros=0,resultadoClin,resultadoMed,resultadoEnf;
 
