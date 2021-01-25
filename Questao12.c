@@ -13,14 +13,15 @@ int main(int argc,char const*argv[])
     Clinica clinicas[TAMCLINICAS],clinica;
     Medico medicos[TAMMEDICOS],medico;
     Enfermeiro enfermeiros[TAMENFERMEIROS],enfermeiro;
-    Auxiliar auxiliares[TAMAUXILIARES];
+    Auxiliar auxiliares[TAMAUXILIARES],auxiliar;
     Cliente clientes[TAMCLIENTES];
 
-    int nClinicas=0,nMedicos=0,nEnfermeiros=0,resultadoClin,resultadoMed,resultadoEnf;
+    int nClinicas=0,nMedicos=0,nEnfermeiros=0,nAuxiliares=0,resultadoClin,resultadoMed,resultadoEnf,resultadoAux;
 
     criarClinica(&clinica,nClinicas);
 
     resultadoClin=inserirClinica(clinicas,&nClinicas,clinica);
+  
 
     if(resultadoClin)
     {
@@ -32,6 +33,7 @@ int main(int argc,char const*argv[])
     }
 
     listarClinicas(clinicas,nClinicas);
+
 
     criarMedico(&medico,nMedicos);
 
@@ -62,6 +64,21 @@ int main(int argc,char const*argv[])
     }
 
     listarEnfermeiros(enfermeiros,nEnfermeiros);
+
+    criarAuxiliar(&auxiliar,nAuxiliares);
+
+    resultadoAux = inserirAuxiliar(auxiliares,&nAuxiliares,auxiliar);
+
+    if(resultadoEnf==1)
+    {
+        printf("Auxiliar criado com sucesso!");
+    }
+    else
+    {
+        printf("Ocorreu um erro!!");
+    }
+    
+   listarAuxiliares(auxiliares,nAuxiliares);
 
     getchar();
 
@@ -143,6 +160,34 @@ int inserirMedico(Medico *medicos, int *n,Medico medico)
     return 1;
 }
 
+void criarAuxiliar(Auxiliar *auxiliar,int n)
+{
+    printf("\nCriar auxiliar:");
+    printf("\nNOME: ");
+    fgets(auxiliar->nome,50,stdin);
+    auxiliar->nome[strlen(auxiliar->nome) - 1]='\0';
+
+    printf("IDADE: ");
+    scanf("%d",&auxiliar->idade);
+    fflush(stdin);
+
+    printf("GENERO (M/F): ");
+    scanf("%c",&auxiliar->genero);
+    fflush(stdin);
+
+    printf("EMAIL: ");
+    fgets(auxiliar->email,100,stdin);
+    auxiliar->email[strlen(auxiliar->email) - 1]='\0';
+    fflush(stdin);
+
+    printf("VENCIMENTO: ");
+    scanf("%f",&auxiliar->vencimento);
+    fflush(stdin);
+
+    auxiliar->id=n+1;
+}
+
+
 void criarEnfermeiro(Enfermeiro *enfermeiro,int n)
 {
     printf("\nCriar enfermeiro:");
@@ -168,6 +213,19 @@ void criarEnfermeiro(Enfermeiro *enfermeiro,int n)
     fflush(stdin);
 
     enfermeiro->id=n+1;
+}
+
+int inserirAuxiliar(Auxiliar *auxiliares,int *n,Auxiliar auxiliar)
+{
+    if(*n>TAMAUXILIARES)
+    {
+        return 0;
+    }
+
+    auxiliares[*n]=auxiliar;
+    (*n)++;
+
+    return 1;
 }
 
 int inserirEnfermeiro(Enfermeiro *enfermeiros, int *n,Enfermeiro enfermeiro)
@@ -221,4 +279,17 @@ void listarEnfermeiros(Enfermeiro *enfermeiros,int *n)
         printf("\n%.2f",enfermeiros[i].vencimento);
     }
     
+}
+
+void listarAuxiliares(Auxiliar *auxiliares,int *n)
+{
+    for (int i = 0; i < n; i++)
+    {
+        printf("\n%d",auxiliares[i].id);
+        printf("\n%s",auxiliares[i].nome);
+        printf("\n%d",auxiliares[i].idade);
+        printf("\n%c",auxiliares[i].genero);
+        printf("\n%s",auxiliares[i].email);
+        printf("\n%.2f",auxiliares[i].vencimento);
+    }
 }
