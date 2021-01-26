@@ -1,7 +1,14 @@
 #ifndef STRUCTS_H_
 #define STRUCTS_H_
 
-
+typedef struct 
+{
+    int sns;
+    char nome[50];
+    int idade;
+    char genero;
+    char email[100];
+}Utente;
 
 typedef struct 
 {
@@ -12,6 +19,8 @@ typedef struct
     char email[100];
     float vencimento;
      int idClinica;
+     int nConsultas;
+     Utente agenda[];
 }Medico;
 
 
@@ -24,6 +33,9 @@ typedef struct
     char email[100];
     float vencimento;
     int idClinica;
+    int nConsultas;
+    Utente agenda[];   
+    
 }Enfermeiro;
 
 typedef struct 
@@ -36,6 +48,8 @@ typedef struct
     float vencimento;
     int idClinica;
 }Auxiliar;
+
+
 
 typedef struct 
 {
@@ -52,13 +66,6 @@ typedef struct
 
 }Clinica;
 
-typedef struct 
-{
-    int sns;
-    char nome[50];
-    int idade;
-    char genero;
-    char email[100];
-}Cliente;
+
 
 #endif

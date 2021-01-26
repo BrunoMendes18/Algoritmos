@@ -6,7 +6,7 @@
 #define TAMMEDICOS 200
 #define TAMENFERMEIROS 200
 #define TAMAUXILIARES 200
-#define TAMCLIENTES 200
+#define TAMUTENTES 200
 
 int main(int argc,char const*argv[])
 {
@@ -14,14 +14,15 @@ int main(int argc,char const*argv[])
     Medico medicos[TAMMEDICOS],medico;
     Enfermeiro enfermeiros[TAMENFERMEIROS],enfermeiro;
     Auxiliar auxiliares[TAMAUXILIARES],auxiliar;
-    Cliente clientes[TAMCLIENTES],cliente;
+    Utente utentes[TAMUTENTES],utente;
 
-    int nClinicas=0,nMedicos=0,nEnfermeiros=0,nAuxiliares=0,nClientes,resultadoClin,resultadoMed,resultadoEnf,resultadoAux,resultadoClien;
+    int nClinicas=0,nMedicos=0,nEnfermeiros=0,nAuxiliares=0,nUtentes=0,resultadoClin,resultadoMed,resultadoEnf,resultadoAux,resultadoUtente;
     int MenuResult=0;
+    int sns,idmedico,idenfermeiro;
 
 while(MenuResult!=8)
 {
-    printf("Menu Clinica:\n1-Criar Clinica\n2-Inserir medico\n3-Inserir enfermeiro\n4-Inserir auxiliar\n5-Inserir Cliente\n6-Marcar Consula Medica\n7-Marcar consulta enfermagem\n8-Sair\n");
+    printf("\nMenu Clinica:\n1-Criar Clinica\n2-Inserir medico\n3-Inserir enfermeiro\n4-Inserir auxiliar\n5-Inserir Utente\n6-Marcar Consula Medica\n7-Marcar consulta enfermagem\n8-Sair\n");
     scanf("%d",&MenuResult);
     switch (MenuResult)
     {
@@ -84,13 +85,13 @@ while(MenuResult!=8)
     break;
 
     case 5:
-criarCliente(&cliente,nClientes);
+    criarUtente(&utente,nUtentes);
 
-    resultadoClien=inserirCliente(clientes,&nClientes,cliente);
+    resultadoUtente=inserirUtente(utentes,&nUtentes,utente);
 
-    if(resultadoClien)
+    if(resultadoUtente)
     {
-        printf("Cliente criado com sucesso!");
+        printf("Utente criado com sucesso!");
     }
     else
     {
@@ -99,10 +100,56 @@ criarCliente(&cliente,nClientes);
     break;
 
     case 6:
+    printf("\nNumero sns:");
+    scanf("%d",&sns);
+  int resultado =  verificarUtente(utentes,nUtentes,sns);
+    if(resultado==0)
+    {
+        printf("\nId do medico:");
+         scanf("%d",&idmedico);
+         int resultado2 =  verificarMedico(medicos,nMedicos,idmedico);
+         if(resultado2==-2)
+         printf("erro");
+         
+         else 
+         //Clinica *clinicas,int *n,int *ID,Utente *utentes,int *nUtentes,int *SNS
+         inserirConsultaMedico(clinicas,nClinicas,idmedico,utentes,nUtentes,sns);
+    }
+    else if(resultado==1)
+    {
+        
+        printf("\nUtente nao existe, crie um primeiro");
+    } else 
+    {
+        printf("Ocurreu um erro");
+    }
     break;
     case 7: 
-    break;
+printf("\nNumero sns:");
+    scanf("%d",&sns);
+  int resultado3 =  verificarUtente(utentes,nUtentes,sns);
+    if(resultado3==0)
+    {
+        printf("\nId do enfermeiro:");
+         scanf("%d",&idenfermeiro);
+         int resultado4=  verificarEnfermeiro(enfermeiros,nEnfermeiros,idenfermeiro);
+         if(resultado4==-2)
+         printf("erro");
+         
+         else 
+         //Clinica *clinicas,int *n,int *ID,Utente *utentes,int *nUtentes,int *SNS
+         inserirConsultaEnfermeiro(clinicas,nClinicas,idenfermeiro,utentes,nUtentes,sns);
+    }
+    else if(resultado3==1)
+    {
+        
+        printf("\nUtente nao existe, crie um primeiro");
+    } else 
+    {
+        printf("Ocurreu um erro");
+    }
 
+    break;
     case 8:
     printf("Saiu");
     break;
@@ -133,7 +180,7 @@ criarCliente(&cliente,nClientes);
 
     
 
-    listarClientes(clientes,nClientes);
+    //listarUtentes(utentes,nUtentes);
 
     getchar();
 
@@ -210,6 +257,7 @@ void criarMedico(Medico *medico,int n)
     fflush(stdin);
 
     medico->id=n+1;
+    medico->nConsultas=-1;
 }
 
 int inserirMedico(Medico *medicos, int *n,Medico medico,Clinica *clinicas,int *nclinicas)
@@ -265,6 +313,7 @@ void criarEnfermeiro(Enfermeiro *enfermeiro,int n)
     fflush(stdin);
 
     enfermeiro->id=n+1;
+    enfermeiro->nConsultas=-1;
 }
 
 int inserirEnfermeiro(Enfermeiro *enfermeiros, int *n,Enfermeiro enfermeiro,Clinica *clinicas,int *nclinicas)
@@ -346,20 +395,23 @@ int inserirAuxiliar(Auxiliar *auxiliares, int *n,Auxiliar auxiliar,Clinica *clin
     return 1;
 }
 
-void criarCliente(Cliente *cliente,int n)
+void criarUtente(Utente *utente,int n)
 {
-    printf("\nCriar cliente:");
+    printf("\nCriar utente:");
     fflush(stdin);
     
-    printf("SNS: ");
-    scanf("%f",&cliente->sns);
+    printf("\nNumero do SNS: ");
+    scanf("%d",&utente->sns);
     fflush(stdin);
 
     printf("\nNOME: ");
-    fgets(cliente->nome,50,stdin);
-    cliente->nome[strlen(cliente->nome) - 1]='\0';
+    fgets(utente->nome,50,stdin);
+    utente->nome[strlen(utente->nome) - 1]='\0';
 
-    printf("IDADE: ");
+
+    //La nao pede entao comentei
+
+   /* printf("IDADE: ");
     scanf("%d",&cliente->idade);
     fflush(stdin);
 
@@ -370,22 +422,115 @@ void criarCliente(Cliente *cliente,int n)
     printf("EMAIL: ");
     fgets(cliente->email,100,stdin);
     cliente->email[strlen(cliente->email) - 1]='\0';
-    fflush(stdin);
+    fflush(stdin);*/
 
 }
 
-int inserirCliente(Cliente *clientes, int *n,Cliente cliente)
+int verificarUtente(Utente *utentes,int *n,int *SNS)
 {
-    if(*n>TAMCLIENTES)
+    for(int i=0;i<=n;i++)
+    {
+        if(utentes[i].sns==SNS)
+        {
+            return 0;
+        }
+    }
+
+    return 1;
+}
+int verificarMedico(Medico *medicos,int *n,int *ID)
+{
+    for(int i=0;i<=n;i++)
+    {
+        if(medicos[i].id==ID)
+        {
+            return i;
+        }
+    }
+
+    return -2;
+}
+int verificarEnfermeiro(Enfermeiro *enfermeiros,int *n,int *ID)
+{
+    for(int i=0;i<=n;i++)
+    {
+        if(enfermeiros[i].id==ID)
+        {
+            return i;
+        }
+    }
+
+    return -2;
+}
+
+void inserirConsultaMedico(Clinica *clinicas,int *n,int *ID,Utente *utentes,int *nUtentes,int *SNS)
+{
+    int posicao;
+
+    for(int i=0;i<=nUtentes;i++)
+    {
+        if(utentes[i].sns==SNS)
+        {
+            posicao=i;
+        }
+    }
+
+    for(int i=0;i<n;i++)
+    {
+        for(int j=0;j<=clinicas[i].numeroMedicos;j++)
+        {
+            if(clinicas[i].medicos[j].id==ID)
+            {
+                clinicas[i].medicos[j].nConsultas +=1;
+                int position = clinicas[i].medicos[j].nConsultas;
+                clinicas[i].medicos[j].agenda[position]= utentes[posicao];
+                
+            }
+        }
+    }
+}
+
+void inserirConsultaEnfermeiro(Clinica *clinicas,int *n,int *ID,Utente *utentes,int *nUtentes,int *SNS)
+{
+    int posicao;
+
+    for(int i=0;i<=nUtentes;i++)
+    {
+        if(utentes[i].sns==SNS)
+        {
+            posicao=i;
+        }
+    }
+
+    for(int i=0;i<n;i++)
+    {
+        for(int j=0;j<=clinicas[i].numeroEnfermeiros;j++)
+        {
+            if(clinicas[i].enfermeiros[j].id==ID)
+            {
+                clinicas[i].enfermeiros[j].nConsultas +=1;
+                int position = clinicas[i].enfermeiros[j].nConsultas;
+                clinicas[i].enfermeiros[j].agenda[position]= utentes[posicao];
+                
+            }
+        }
+    }
+}
+
+int inserirUtente(Utente *utentes, int *n,Utente utente)
+{
+    if(*n>TAMUTENTES)
     {
         return 0;
     }
 
-    clientes[*n]=cliente;
+    utentes[*n]=utente;
     (*n)++;
 
     return 1;
 }
+
+
 
 void listarClinicas(Clinica *clinicas,int *n)
 {
@@ -397,16 +542,28 @@ void listarClinicas(Clinica *clinicas,int *n)
         printf("\n%s",clinicas[i].contacto);
         //printf("\n%s",clinicas[i].medicos[0].nome);
         //printf("\n%s",clinicas[i].medicos[1].nome); 
+        
         for(int j=0;j<=clinicas[i].numeroMedicos;j++)
         {
             //so mostra o nome para nao ficar enorme na consola depois pomos o resto
             printf("\n%s",clinicas[i].medicos[j].nome);
+            for(int h=0;h<=clinicas[i].medicos[j].nConsultas;h++)
+            {
+                 printf("\n%s",clinicas[i].medicos[j].agenda[h].nome);
+                 printf("\n%d",clinicas[i].medicos[j].agenda[h].sns);
+            }
         }  
         for(int j=0;j<=clinicas[i].numeroEnfermeiros;j++)
         {
             //so mostra o nome para nao ficar enorme na consola depois pomos o resto
             printf("\n%s",clinicas[i].enfermeiros[j].nome);
+            for(int h=0;h<=clinicas[i].enfermeiros[j].nConsultas;h++)
+            {
+                 printf("\n%s",clinicas[i].enfermeiros[j].agenda[h].nome);
+                 printf("\n%d",clinicas[i].enfermeiros[j].agenda[h].sns);
+            }
         } 
+        
         for(int j=0;j<=clinicas[i].numeroAuxiliares;j++)
         {
             //so mostra o nome para nao ficar enorme na consola depois pomos o resto
@@ -462,15 +619,15 @@ void listarAuxiliares(Auxiliar *auxilares,int *n)
     
 }
 
-void listarClientes(Cliente *clientes,int *n)
+void listarUtentes(Utente* utentes,int *n)
 {
    for (int i = 0; i < n; i++)
     {
-         printf("\n%d",clientes[i].sns);
-        printf("\n%s",clientes[i].nome);
-        printf("\n%d",clientes[i].idade);
-        printf("\n%c",clientes[i].genero);
-        printf("\n%s",clientes[i].email);
+         printf("\n%d",utentes[i].sns);
+        printf("\n%s",utentes[i].nome);
+        /*printf("\n%d",utentes[i].idade);
+        printf("\n%c",utentes[i].genero);
+        printf("\n%s",utentes[i].email);*/
        
     }
     
