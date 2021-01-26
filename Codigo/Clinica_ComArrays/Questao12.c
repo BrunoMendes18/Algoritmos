@@ -41,7 +41,7 @@ while(MenuResult!=8)
     case 2:
     criarMedico(&medico,nMedicos);
 
-    resultadoMed=inserirMedico(medicos,&nMedicos,medico,clinicas);
+    resultadoMed=inserirMedico(medicos,&nMedicos,medico,clinicas,nClinicas);
 
     if(resultadoMed)
     {
@@ -56,7 +56,7 @@ while(MenuResult!=8)
     case 3:
     criarEnfermeiro(&enfermeiro,nEnfermeiros);
 
-    resultadoEnf=inserirEnfermeiro(enfermeiros,&nEnfermeiros,enfermeiro);
+    resultadoEnf=inserirEnfermeiro(enfermeiros,&nEnfermeiros,enfermeiro,clinicas,nClinicas);
 
     if(resultadoEnf)
     {
@@ -71,7 +71,7 @@ while(MenuResult!=8)
     case 4:
     criarAuxiliar(&auxiliar,nAuxiliares);
 
-    resultadoAux=inserirAuxiliar(auxiliares,&nAuxiliares,auxiliar);
+    resultadoAux=inserirAuxiliar(auxiliares,&nAuxiliares,auxiliar,clinicas,nClinicas);
 
     if(resultadoAux)
     {
@@ -121,15 +121,15 @@ criarCliente(&cliente,nClientes);
 
     
 
-    listarMedico(medicos,nMedicos);
+    //listarMedico(medicos,nMedicos);
 
     
 
-    listarEnfermeiros(enfermeiros,nEnfermeiros);
+    //listarEnfermeiros(enfermeiros,nEnfermeiros);
 
     
 
-    listarAuxiliares(auxiliares,nAuxiliares);
+    //listarAuxiliares(auxiliares,nAuxiliares);
 
     
 
@@ -161,6 +161,9 @@ void criarClinica(Clinica *clinica,int n)
     fflush(stdin);
 
     clinica->id=n+1;
+    clinica->numeroMedicos=-1;
+    clinica->numeroEnfermeiros=-1;
+    clinica->numeroAuxiliares=-1;
 }
 
 int inserirClinica(Clinica *clinicas, int *n,Clinica clinica)
@@ -209,24 +212,20 @@ void criarMedico(Medico *medico,int n)
     medico->id=n+1;
 }
 
-int inserirMedico(Medico *medicos, int *n,Medico medico,Clinica *clinicas)
+int inserirMedico(Medico *medicos, int *n,Medico medico,Clinica *clinicas,int *nclinicas)
 {
     if(*n>TAMMEDICOS)
     {
         return 0;
     }
-//Aqui ao inseir um novo medico eu preciso de uma variavel ou o crl para contar o numero de medicos
 
-//Tive a pensar podemos por uma propriedade das clinicas int numero de medicos e fazer algo assim no comentario em baixo
-
-//EU pus 4(numero de teste ) pk eu preciso de passar o numero de clinicas mas ns se é apontador ou normal entao usei o 4
-    for(int i=0;i<4;i++)
+    for(int i=0;i<nclinicas;i++)
     {
         if(clinicas[i].id == medico.idClinica)
         {
-            //clinicas[i].numeroMedicos +=1;
-            //clinas[i].medicos[numeroMedicos]=medico;
-            clinicas[i].medicos[0]=medico;
+            clinicas[i].numeroMedicos = clinicas[i].numeroMedicos +1;
+            clinicas[i].medicos[clinicas[i].numeroMedicos]=medico;
+            
         }
     }
 
@@ -261,14 +260,28 @@ void criarEnfermeiro(Enfermeiro *enfermeiro,int n)
     scanf("%f",&enfermeiro->vencimento);
     fflush(stdin);
 
+    printf("Associar Clinica(id): ");
+    scanf("%d",&enfermeiro->idClinica);
+    fflush(stdin);
+
     enfermeiro->id=n+1;
 }
 
-int inserirEnfermeiro(Enfermeiro *enfermeiros, int *n,Enfermeiro enfermeiro)
+int inserirEnfermeiro(Enfermeiro *enfermeiros, int *n,Enfermeiro enfermeiro,Clinica *clinicas,int *nclinicas)
 {
     if(*n>TAMENFERMEIROS)
     {
         return 0;
+    }
+
+    for(int i=0;i<nclinicas;i++)
+    {
+        if(clinicas[i].id == enfermeiro.idClinica)
+        {
+            clinicas[i].numeroEnfermeiros = clinicas[i].numeroEnfermeiros +1;
+            clinicas[i].enfermeiros[clinicas[i].numeroEnfermeiros]=enfermeiro;
+            
+        }
     }
 
     enfermeiros[*n]=enfermeiro;
@@ -303,14 +316,28 @@ void criarAuxiliar(Auxiliar *auxiliar,int n)
     scanf("%f",&auxiliar->vencimento);
     fflush(stdin);
 
+    printf("Associar Clinica(id): ");
+    scanf("%d",&auxiliar->idClinica);
+    fflush(stdin);
+
     auxiliar->id=n+1;
 }
 
-int inserirAuxiliar(Auxiliar *auxiliares, int *n,Auxiliar auxiliar)
+int inserirAuxiliar(Auxiliar *auxiliares, int *n,Auxiliar auxiliar,Clinica *clinicas,int *nclinicas)
 {
     if(*n>TAMAUXILIARES)
     {
         return 0;
+    }
+
+    for(int i=0;i<nclinicas;i++)
+    {
+        if(clinicas[i].id == auxiliar.idClinica)
+        {
+            clinicas[i].numeroAuxiliares = clinicas[i].numeroAuxiliares +1;
+            clinicas[i].axuliares[clinicas[i].numeroAuxiliares]=auxiliar;
+            
+        }
     }
 
     auxiliares[*n]=auxiliar;
@@ -367,10 +394,26 @@ void listarClinicas(Clinica *clinicas,int *n)
         printf("\n%d",clinicas[i].id);
         printf("\n%s",clinicas[i].nome);
         printf("\n%s",clinicas[i].localizacao);
-        printf("\n%s",clinicas[i].contacto); 
-
-        //isto depois tem de ser um ciclo J para percorrer os medicos      
-        printf("%s",clinicas[i].medicos[0].nome);
+        printf("\n%s",clinicas[i].contacto);
+        //printf("\n%s",clinicas[i].medicos[0].nome);
+        //printf("\n%s",clinicas[i].medicos[1].nome); 
+        for(int j=0;j<=clinicas[i].numeroMedicos;j++)
+        {
+            //so mostra o nome para nao ficar enorme na consola depois pomos o resto
+            printf("\n%s",clinicas[i].medicos[j].nome);
+        }  
+        for(int j=0;j<=clinicas[i].numeroEnfermeiros;j++)
+        {
+            //so mostra o nome para nao ficar enorme na consola depois pomos o resto
+            printf("\n%s",clinicas[i].enfermeiros[j].nome);
+        } 
+        for(int j=0;j<=clinicas[i].numeroAuxiliares;j++)
+        {
+            //so mostra o nome para nao ficar enorme na consola depois pomos o resto
+            printf("\n%s",clinicas[i].axuliares[j].nome);
+        }          
+           
+        
         
     }
     
